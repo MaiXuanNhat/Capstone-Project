@@ -1,0 +1,61 @@
+version: '1.0'
+
+networks:
+  capstone_project_network:
+    name: capstone_project_network
+
+services:
+  nodejs:
+    networks:
+      - capstone_project_network
+    restart: always
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: nodejs
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/Back-end
+      - "/Back-end/node_modules"
+    depends_on:
+      - mysql
+
+  mysql:
+    networks:
+      - capstone_project_network
+    restart: always
+    image: mysql:8.0
+    container_name: mysql
+    volumes:
+      - .docker/mysql:/var/lib/mysql
+      - .docker/data:/data
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=capstone_project_database
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=root
+  
+  phpmyadmin:
+    networks:
+      - capstone_project_network
+    image: phpmyadmin:5.2.1
+    restart: always
+    container_name: phpmyadmin
+    ports:
+      - '8080:80'
+    environment:
+      - PMA_HOST=mysql
+    depends_on:
+      - mysql
+
+  nginx:
+    networks:
+      - capstone_project_network
+    restart: always
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+    
