@@ -4,16 +4,19 @@ const {
 } = require('sequelize');
 const { toLocaleString } = require(process.cwd() + '/helpers/datetime')
 module.exports = (sequelize, DataTypes) => {
-  class Playlists extends Model {
+  class LikedSong extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
     static associate(models) {
-      Playlists.belongsTo(models.User, { foreignKey: 'user_id' })
-      Playlists.hasMany(models.Songs, { through: 'SongsPlaylists' })
+      // define association here
     }
   }
-  Playlists.init({
+  LikedSong.init({
     user_id: DataTypes.INTEGER,
-    title: DataTypes.STRING,
-    descripsion: DataTypes.STRING,
+    song_id: DataTypes.INTEGER,
     createdAt: {
       type: DataTypes.DATE,
       get: function () {
@@ -34,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Playlists',
+    modelName: 'LikedSong',
   });
-  return Playlists;
+  return LikedSong;
 };

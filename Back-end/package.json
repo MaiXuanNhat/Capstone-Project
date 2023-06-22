@@ -38,6 +38,7 @@
         "nodemon": "^2.0.22",
         "sequelize": "^6.31.0",
         "sequelize-cli": "^6.6.0",
+        "spotify-web-api-node": "^5.0.2",
         "uuid": "^9.0.0"
     },
     "devDependencies": {

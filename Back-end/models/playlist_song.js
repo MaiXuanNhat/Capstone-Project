@@ -4,16 +4,14 @@ const {
 } = require('sequelize');
 const { toLocaleString } = require(process.cwd() + '/helpers/datetime')
 module.exports = (sequelize, DataTypes) => {
-  class Playlists extends Model {
+  class SongsPlaylists extends Model {
     static associate(models) {
-      Playlists.belongsTo(models.User, { foreignKey: 'user_id' })
-      Playlists.hasMany(models.Songs, { through: 'SongsPlaylists' })
+      SongsPlaylists.belongsTo(models.Playlists, { foreignKey: 'playlist_id' })
     }
   }
-  Playlists.init({
-    user_id: DataTypes.INTEGER,
-    title: DataTypes.STRING,
-    descripsion: DataTypes.STRING,
+  SongsPlaylists.init({
+    playlist_id: DataTypes.INTEGER,
+    song_id: DataTypes.INTEGER,
     createdAt: {
       type: DataTypes.DATE,
       get: function () {
@@ -34,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Playlists',
+    modelName: 'PlaylistSong',
   });
-  return Playlists;
+  return SongsPlaylists;
 };
