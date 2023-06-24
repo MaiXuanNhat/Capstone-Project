@@ -7,10 +7,6 @@ const userSchema = {
     deleted_at: { type: 'string', optional: true },
 }
 
-const roleSchema = {
-    name: { type: 'string', optional: true },
-}
-
 const userInfoSchema = {
     user_id: { type: 'number', optional: true },
     avatar: { type: 'string', optional: true },
@@ -20,8 +16,14 @@ const userInfoSchema = {
     gender: { type: 'number', optional: true },
 }
 
+const playlistSchema = {
+    user_id: { type: 'number', optional: true },
+    title: { type: 'string', optional: true },
+    description: { type: 'string', optional: true },
+}
+
 module.exports = {
     userSchema: userSchema,
-    roleSchema: roleSchema,
     userInfoSchema: userInfoSchema,
+    playlistSchema: playlistSchema,
 }
