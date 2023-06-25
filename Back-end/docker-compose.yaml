@@ -1,13 +1,28 @@
 version: '1.0'
 
 networks:
-  nhat_capstone_project_network:
-    name: nhat_capstone_project_network
+  capstone_project_network:
+    name: capstone_project_network
 
 services:
-  nhat_nodejs:
+  flask-server:
     networks:
-      - nhat_capstone_project_network
+      - capstone_project_network
+    restart: always
+    container_name: flask-server
+    build: 
+      context: ../Flask-server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+      - "6006:6006"
+      - "8888:8888"
+    volumes:
+      - ../Flask-server:/Flask-server
+      - ./public:/Flask-server/public
+  nodejs:
+    networks:
+      - capstone_project_network
     restart: always
     build: 
       context: .
@@ -19,11 +34,11 @@ services:
       - .:/Back-end
       - "/Back-end/node_modules"
     depends_on:
-      - nhat_mysql
+      - mysql
 
-  nhat_mysql:
+  mysql:
     networks:
-      - nhat_capstone_project_network
+      - capstone_project_network
     restart: always
     image: mysql:8.0
     container_name: mysql
@@ -37,9 +52,9 @@ services:
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_PASSWORD=root
   
-  nhat_phpmyadmin:
+  phpmyadmin:
     networks:
-      - nhat_capstone_project_network
+      - capstone_project_network
     image: phpmyadmin:5.2.1
     restart: always
     container_name: phpmyadmin
@@ -48,29 +63,29 @@ services:
     environment:
       - PMA_HOST=mysql
     depends_on:
-      - nhat_mysql
+      - mysql
 
-  nhat_nginx:
+  nginx:
     networks:
-      - nhat_capstone_project_network
+      - capstone_project_network
     restart: always
     image: nginx:latest
     container_name: nginx
     ports:
       - "80:80"
 
-  # expo:
-  #   networks:
-  #     - capstone_project_network
-  #   restart: always
-  #   container_name: expo
-  #   build: ../Mobile-app
-  #   ports:
-  #     - '19000:19000'
-  #   environment:
-  #     - NODE_ENV=development
-  #     - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-  #     - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.8.2
-  #   volumes:
-  #     - ../Mobile-app:/Mobile-app
-  #     - "/Mobile-app/node_modules"
+  expo:
+    networks:
+      - capstone_project_network
+    restart: always
+    container_name: expo
+    build: ../Mobile-app
+    ports:
+      - '19000:19000'
+    environment:
+      - NODE_ENV=development
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - REACT_NATIVE_PACKAGER_HOSTNAME=192.168.8.2
+    volumes:
+      - ../Mobile-app:/Mobile-app
+      - "/Mobile-app/node_modules"
