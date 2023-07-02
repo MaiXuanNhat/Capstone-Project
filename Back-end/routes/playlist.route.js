@@ -8,13 +8,11 @@ const router = express.Router()
 router.get(
     '/',
     checkAuthMiddleware.checkAuth,
-    checkOwnerMiddleware.checkAccountOwner,
     playlistApiController.index,
 )
 router.get(
     '/:id',
     checkAuthMiddleware.checkAuth,
-    checkOwnerMiddleware.checkAccountOwner,
     checkOwnerMiddleware.checkPlaylistOwner,
     playlistApiController.showById,
 )
@@ -22,14 +20,12 @@ router.post('/', checkAuthMiddleware.checkAuth, playlistApiController.create)
 router.patch(
     '/:id',
     checkAuthMiddleware.checkAuth,
-    checkOwnerMiddleware.checkAccountOwner,
     checkOwnerMiddleware.checkPlaylistOwner,
     playlistApiController.updateById,
 )
 router.delete(
     '/:id',
     checkAuthMiddleware.checkAuth,
-    checkOwnerMiddleware.checkAccountOwner,
     checkOwnerMiddleware.checkPlaylistOwner,
     playlistApiController.deleteById,
 )

@@ -19,7 +19,7 @@ async function index(request, response) {
                 : '',
             from_date: request.query.from_date
                 ? request.query.from_date.trim() + ' 00:00:00'
-                : '0000-00-00 00:00:00',
+                : '0001-01-01 00:00:00',
             to_date: request.query.to_date
                 ? request.query.to_date.trim() + ' 23:59:59'
                 : getCurrentDateTime().split(' ')[0] + ' 23:59:59',
@@ -85,7 +85,17 @@ async function create(request, response) {
         }
 
         // Create new playlist
-        addNewPlaylist(newPlaylist).then((result) => {
+        addNewPlaylist(newPlaylist).then(async (result) => {
+            // Create song associations
+            const songsIds = request.body.song_ids
+            if (
+                songsIds &&
+                Array.isArray(songsIds) &&
+                songsIds.length > 0
+            ) {
+                await result.setSongs(songsIds)
+            }
+
             return response.status(200).json({
                 playlistId: result.id,
                 message: 'Create playlist successfully!',
@@ -123,7 +133,7 @@ async function updateById(request, response) {
             // Update vehicle's data
             await updatePlaylistById(updatePlaylist, dbPlaylist.id)
 
-            // Update playlist associations
+            // Update song associations
             const songIds = request.body.song_ids
             if (songIds && Array.isArray(songIds) && songIds.length > 0) {
                 await dbPlaylist.setSongs(songIds)

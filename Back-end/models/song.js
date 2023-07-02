@@ -1,5 +1,6 @@
 'use strict'
 const { Model } = require('sequelize')
+const { toLocaleString } = require(process.cwd() + '/helpers/datetime')
 module.exports = (sequelize, DataTypes) => {
     class Song extends Model {
         static associate(models) {
@@ -14,7 +15,15 @@ module.exports = (sequelize, DataTypes) => {
             title: DataTypes.STRING,
             artists: DataTypes.TEXT,
             duration: DataTypes.INTEGER,
-            release_date: DataTypes.DATE,
+            release_date: {
+                type: DataTypes.DATE,
+                get: function () {
+                    if (this.getDataValue('release_date')) {
+                        return toLocaleString(this.getDataValue('release_date'))
+                    }
+                    return null
+                },
+            },
             createdAt: {
                 type: DataTypes.DATE,
                 get: function () {

@@ -29,7 +29,7 @@ async function index(request, response) {
                 : '',
             from_date: request.query.from_date
                 ? request.query.from_date.trim() + ' 00:00:00'
-                : '0000-00-00 00:00:00',
+                : '0001-01-01 00:00:00',
             to_date: request.query.to_date
                 ? request.query.to_date.trim() + ' 23:59:59'
                 : getCurrentDateTime().split(' ')[0] + ' 23:59:59',
@@ -43,6 +43,7 @@ async function index(request, response) {
 
         return response.status(200).json(queryResult)
     } catch (error) {
+        console.log(error);
         return response.status(500).json({
             message: 'Something went wrong!',
             error: error,

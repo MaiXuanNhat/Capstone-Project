@@ -59,7 +59,7 @@ async function showBySpotifyId(spotifyId, userId) {
         include: include,
         where: {
             spotify_id: spotifyId,
-            ...selection,
+            // ...selection,
         },
     })
 }
