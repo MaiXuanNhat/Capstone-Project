@@ -106,7 +106,7 @@ def recommend_songs(song_list, spotify_data, n_songs=10):
 
 @app.route('/recommend-songs', methods=['POST'])
 def handle_recommend_songs():
-    # try:
+    try:
         # Get new item data from request
         query_songs = list(request.get_json().get('query_songs'))
         limit = int(request.get_json().get('limit'))
@@ -115,8 +115,8 @@ def handle_recommend_songs():
             return recommend_songs(query_songs, songs_data, limit)
         else:
             return 'Request not valid or songs data, model not loaded yet!'
-    # except:
-    #     return 'Something went wrong!'
+    except:
+        return 'Something went wrong!'
 
 
 if __name__ == "__main__":
