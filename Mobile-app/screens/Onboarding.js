@@ -12,10 +12,19 @@ const { height, width } = Dimensions.get("screen");
 
 import argonTheme from "../constants/Theme";
 import Images from "../constants/Images";
+import useAuth from '../hooks/useAuth'
 
-class Onboarding extends React.Component {
-  render() {
-    const { navigation } = this.props;
+function Onboarding(props) {
+  const { navigation } = props
+  const { token } = useAuth()
+
+  const handlePress = () => {
+    if (!token) {
+      navigation.navigate('Login')
+    } else {
+      navigation.navigate('App')
+    }
+  }
 
     return (
       <Block flex style={styles.container}>
@@ -52,7 +61,7 @@ class Onboarding extends React.Component {
                 <Button
                   style={styles.button}
                   color={argonTheme.COLORS.SECONDARY}
-                  onPress={() => navigation.navigate("App")}
+                  onPress={handlePress}
                   textStyle={{ color: argonTheme.COLORS.BLACK }}
                 >
                   Get Started
@@ -63,7 +72,7 @@ class Onboarding extends React.Component {
       </Block>
     );
   }
-}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -96,4 +105,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Onboarding;
+export default Onboarding

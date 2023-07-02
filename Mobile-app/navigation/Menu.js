@@ -5,6 +5,8 @@ import { DrawerItem as DrawerCustomItem } from "../components";
 import Images from "../constants/Images";
 import React from "react";
 
+import useAuth from '../hooks/useAuth'
+
 function CustomDrawerContent({
   drawerPosition,
   navigation,
@@ -13,7 +15,8 @@ function CustomDrawerContent({
   state,
   ...rest
 }) {
-  const screens = ["Home", "Profile", "Account", "Elements", "Articles"];
+  const screens = ["Home", "Profile", "Account", "Elements", "Articles", "MusicPlayer"];
+  const { handleLogout } = useAuth()
   return (
     <Block
       style={styles.container}
@@ -50,6 +53,7 @@ function CustomDrawerContent({
             </Text>
           </Block>
           <DrawerCustomItem title="Getting Started" navigation={navigation} />
+          <DrawerCustomItem title="Log out" navigation={navigation} handleLogout={handleLogout} />
         </ScrollView>
       </Block>
     </Block>

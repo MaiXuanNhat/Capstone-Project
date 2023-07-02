@@ -11,6 +11,7 @@ const androidLogo = require("../assets/imgs/android.png");
 // internet imgs
 
 const ProfilePicture = 'https://images.unsplash.com/photo-1492633423870-43d1cd2775eb?fit=crop&w=1650&q=80';
+const WhiteImage = 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Solid_white.svg/2048px-Solid_white.svg.png';
 
 const Viewed = [
   'https://images.unsplash.com/photo-1501601983405-7c7cabaa1581?fit=crop&w=240&q=80',
@@ -37,5 +38,6 @@ export default {
   Pro,
   ArgonLogo,
   iOSLogo,
-  androidLogo
+  androidLogo, 
+  WhiteImage,
 };

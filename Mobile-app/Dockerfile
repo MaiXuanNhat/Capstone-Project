@@ -14,4 +14,4 @@ VOLUME [ "/Mobile-app/node_modules" ]
 
 EXPOSE 19000
 
-CMD ["npm", "start"]
+CMD ["npx","expo","start"]

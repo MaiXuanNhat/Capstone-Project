@@ -1,52 +1,39 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   StyleSheet,
   ImageBackground,
   Dimensions,
   StatusBar,
+  Image,
+  View,
   KeyboardAvoidingView,
 } from 'react-native'
-import { Block, Checkbox, Text, theme } from 'galio-framework'
 import { useForm, Controller } from 'react-hook-form'
+import { Block, Text, theme } from 'galio-framework'
 
 import { Button, Icon, Input } from '../components'
 import { Images, argonTheme } from '../constants'
 
-import auth from '../api/auth'
+import useAuth from '../hooks/useAuth'
 
 const { width, height } = Dimensions.get('screen')
 
-function Register(props) {
+function Login(props) {
   const { navigation } = props
+  const { handleLogin } = useAuth()
 
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: '',
       email: '',
       password: '',
-      confirmPassword: '',
     },
   })
-
-  const pwd = watch('password')
-
-    
-
-  const onSubmit = async (formData) => {
-    try {
-      const response = await auth.register(formData)
-      if (response.request.status === 200) {
-        console.log(response.data.message)
-        navigation.navigate('Login')
-      }
-    } catch (error) {
-      console.log(error.response.data.message)
-    }
+  const onSubmit = async (credentials) => {
+    await handleLogin(credentials, navigation)
   }
 
   return (
@@ -58,9 +45,9 @@ function Register(props) {
       >
         <Block safe flex middle>
           <Block style={styles.registerContainer}>
-            <Block flex={0.2} middle style={styles.socialConnect}>
+            <Block flex={0.25} middle style={styles.socialConnect}>
               <Text color="#8898AA" size={12}>
-                Sign up with
+                Sign in with
               </Text>
               <Block row style={{ marginTop: theme.SIZES.BASE }}>
                 <Button style={{ ...styles.socialButtons, marginRight: 30 }}>
@@ -90,64 +77,34 @@ function Register(props) {
               </Block>
             </Block>
             <Block flex>
-              <Block flex={0.1} middle>
-                <Text color="#8898AA" size={12}>
-                  Or sign up the classic way
+              <Block flex={0.17} middle>
+                <Text color="#8898AA" size={12} style={{ marginTop: -15 }}>
+                  Or sign in the classic way
                 </Text>
               </Block>
+              <Image
+                source={Images.ArgonLogo}
+                style={styles.picture}
+              />
               <Block flex center>
                 <KeyboardAvoidingView
                   style={{ flex: 1 }}
-                  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                  behavior="padding"
                   enabled
                 >
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                  <Block
+                    width={width * 0.86}
+                    style={{ marginBottom: 15, marginTop: 15 }}
+                  >
                     <Controller
                       control={control}
                       rules={{
-                        required: 'Name is required',
-                        maxLength: {
-                          value: 20,
-                          message: 'Name should be under 20 characters',
-                        },
-                      }}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <Input
-                          borderless
-                          placeholder="Name"
-                          onBlur={onBlur}
-                          onChangeText={onChange}
-                          value={value}
-                          iconContent={
-                            <Icon
-                              size={16}
-                              color={argonTheme.COLORS.ICON}
-                              name="hat-3"
-                              family="ArgonExtra"
-                              style={styles.inputIcons}
-                            />
-                          }
-                        />
-                      )}
-                      name="name"
-                    />
-                    {errors.name && (
-                      <Text style={{ color: 'red', alignSelf: 'stretch' }}>
-                        {errors.name.message || 'Error'}
-                      </Text>
-                    )}
-                  </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
-                    <Controller
-                      control={control}
-                      rules={{
-                        required: 'Email is required',
+                        required: true,
                       }}
                       render={({ field: { onChange, onBlur, value } }) => (
                         <Input
                           borderless
                           placeholder="Email"
-                          onBlur={onBlur}
                           onChangeText={onChange}
                           value={value}
                           iconContent={
@@ -164,29 +121,24 @@ function Register(props) {
                       name="email"
                     />
                     {errors.email && (
-                      <Text style={{ color: 'red', alignSelf: 'stretch' }}>
+                      <Text style={styles.error}>
                         {errors.email.message || 'Error'}
                       </Text>
                     )}
-                  </Block>                  
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                  </Block>
+                  <Block width={width * 0.86}>
                     <Controller
                       control={control}
                       rules={{
-                        required: 'Password is required',
-                        minLength: {
-                          value: 6,
-                          message:
-                            'Password should be at least 6 characters long',
-                        },
+                        maxLength: 100,
+                        required: true,
                       }}
                       render={({ field: { onChange, onBlur, value } }) => (
                         <Input
-                          password
                           borderless
                           placeholder="Password"
-                          onBlur={onBlur}
                           onChangeText={onChange}
+                          secureTextEntry={true}
                           value={value}
                           iconContent={
                             <Icon
@@ -202,81 +154,38 @@ function Register(props) {
                       name="password"
                     />
                     {errors.password && (
-                      <Text style={{ color: 'red', alignSelf: 'stretch' }}>
+                      <Text style={styles.error}>
                         {errors.password.message || 'Error'}
                       </Text>
                     )}
                   </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
-                    <Controller
-                      control={control}
-                      rules={{
-                        validate: (value) =>
-                          value === pwd || 'Password not match',
-                      }}
-                      render={({ field: { onChange, onBlur, value } }) => (
-                        <Input
-                          password
-                          borderless
-                          placeholder="Confirm Password"
-                          onBlur={onBlur}
-                          onChangeText={onChange}
-                          value={value}
-                          iconContent={
-                            <Icon
-                              size={16}
-                              color={argonTheme.COLORS.ICON}
-                              name="padlock-unlocked"
-                              family="ArgonExtra"
-                              style={styles.inputIcons}
-                            />
-                          }
-                        />
-                      )}
-                      name="confirmPassword"
-                    />
-                    {errors.confirmPassword && (
-                      <Text style={{ color: 'red', alignSelf: 'stretch' }}>
-                        {errors.confirmPassword.message || 'Error'}
-                      </Text>
-                    )}
-                  </Block>
-                  <Block row width={width * 0.75}>
-                    <Checkbox
-                      checkboxStyle={{
-                        borderWidth: 3,
-                      }}
-                      color={argonTheme.COLORS.PRIMARY}
-                      label="I agree with the"
-                    />
-                    <Button
-                      style={{ width: 100 }}
-                      color="transparent"
-                      textStyle={{
-                        color: argonTheme.COLORS.PRIMARY,
-                        fontSize: 14,
-                      }}
-                    >
-                      Privacy Policy
-                    </Button>
-                  </Block>
+                  <Text
+                    style={styles.forgotPassword}
+                    onPress={() => Linking.openURL('http://google.com')}
+                  >
+                    Forgot password?
+                  </Text>
                   <Block middle>
                     <Button
+                      title="Login"
+                      size={14}
                       onPress={handleSubmit(onSubmit)}
                       color="primary"
-                      style={styles.submitButton}
+                      style={styles.createButton}
                     >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        CREATE ACCOUNT
+                        LOGIN
                       </Text>
                     </Button>
+                    <View>
+                      <Text
+                        style={styles.createAccount}
+                        onPress={() => navigation.navigate('Register')}
+                      >
+                        Create a new account
+                      </Text>
+                    </View>
                   </Block>
-                  <Text
-                    style={styles.navigateToLogin}
-                    onPress={() => navigation.navigate('Login')}
-                  >
-                    Already had an account? Sign in now!
-                  </Text>
                 </KeyboardAvoidingView>
               </Block>
             </Block>
@@ -290,9 +199,9 @@ function Register(props) {
 const styles = StyleSheet.create({
   registerContainer: {
     width: width * 0.9,
-    height: height * 0.915,
+    height: height * 0.875,
     backgroundColor: '#F4F5F7',
-    borderRadius: 15,
+    borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
     shadowOffset: {
       width: 0,
@@ -334,11 +243,23 @@ const styles = StyleSheet.create({
     paddingTop: 13,
     paddingBottom: 30,
   },
-  submitButton: {
+  createButton: {
     width: width * 0.5,
     marginTop: 25,
   },
-  navigateToLogin: {
+  picture: {
+    width: 120,
+    height: 120,
+    marginTop: -20,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  forgotPassword: {
+    color: 'gray',
+    textAlign: 'right',
+    marginTop: 10,
+  },
+  createAccount: {
     marginLeft: 'auto',
     marginRight: 'auto',
     color: 'gray',
@@ -346,4 +267,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Register
+export default Login

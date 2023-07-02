@@ -2,13 +2,14 @@ import { LogBox } from 'react-native';
 LogBox.ignoreLogs(['Warning: ...']);
 LogBox.ignoreAllLogs();
 
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { Image } from "react-native";
 import AppLoading from "expo-app-loading";
 import { useFonts } from '@use-expo/font';
 import { Asset } from "expo-asset";
 import { Block, GalioProvider } from "galio-framework";
 import { NavigationContainer } from "@react-navigation/native";
+import { AuthProvider } from './contexts/AuthContext'
 
 // Before rendering any navigation stack
 import { enableScreens } from "react-native-screens";
@@ -57,11 +58,11 @@ export default props => {
     console.warn(error);
   };
 
- function _handleFinishLoading() {
+  function _handleFinishLoading() {
     setLoading(true);
   };
 
-  if(!fontsLoaded && !isLoadingComplete) {
+  if (!fontsLoaded && !isLoadingComplete) {
     return (
       <AppLoading
         startAsync={_loadResourcesAsync}
@@ -69,15 +70,17 @@ export default props => {
         onFinish={_handleFinishLoading}
       />
     );
-  } else if(fontsLoaded) {
+  } else if (fontsLoaded) {
     return (
-      <NavigationContainer>
-        <GalioProvider theme={argonTheme}>
-          <Block flex>
-            <Screens />
-          </Block>
-        </GalioProvider>
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <GalioProvider theme={argonTheme}>
+            <Block flex>
+              <Screens />
+            </Block>
+          </GalioProvider>
+        </NavigationContainer>
+      </AuthProvider>
     );
   } else {
     return null

@@ -62,29 +62,45 @@ class DrawerItem extends React.Component {
           size={14}
           color={focused ? "white" : "rgba(0,0,0,0.5)"}
         />);
+      case "MusicPlayer":
+        return (
+          <Icon
+            name="calendar-date"
+            family="ArgonExtra"
+            size={14}
+            color={focused ? "white" : argonTheme.COLORS.SUCCESS}
+          />
+        );
       case "Log out":
-        return <Icon />;
+        return <Icon
+          name="logout"
+          family="MaterialIcons"
+          size={20}
+          color={focused ? 'white' : argonTheme.COLORS.BLACK}
+        />
       default:
         return null;
     }
   };
 
   render() {
-    const { focused, title, navigation } = this.props;
+    const { focused, title, navigation, handleLogout } = this.props
 
     const containerStyles = [
       styles.defaultStyle,
-      focused ? [styles.activeStyle, styles.shadow] : null
-    ];
+      focused ? [styles.activeStyle, styles.shadow] : null,
+    ]
+
+    const onLogoutTabPress = async () => {
+      await handleLogout(navigation)
+    }
 
     return (
       <TouchableOpacity
         style={{ height: 60 }}
         onPress={() =>
-          title == "Getting Started"
-            ? Linking.openURL(
-                "https://demos.creative-tim.com/argon-pro-react-native/docs/"
-              ).catch(err => console.error("An error occurred", err))
+          title === 'Log out'
+            ? onLogoutTabPress()
             : navigation.navigate(title)
         }
       >
@@ -96,35 +112,35 @@ class DrawerItem extends React.Component {
             <Text
               size={15}
               bold={focused ? true : false}
-              color={focused ? "white" : "rgba(0,0,0,0.5)"}
+              color={focused ? 'white' : 'rgba(0,0,0,0.5)'}
             >
               {title}
             </Text>
           </Block>
         </Block>
       </TouchableOpacity>
-    );
+    )
   }
 }
 
 const styles = StyleSheet.create({
   defaultStyle: {
     paddingVertical: 16,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   activeStyle: {
     backgroundColor: argonTheme.COLORS.ACTIVE,
-    borderRadius: 4
+    borderRadius: 4,
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowRadius: 8,
-    shadowOpacity: 0.1
-  }
-});
+    shadowOpacity: 0.1,
+  },
+})
 
-export default DrawerItem;
+export default DrawerItem

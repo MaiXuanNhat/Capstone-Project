@@ -15,6 +15,9 @@ import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
 import React from "react";
 import Register from "../screens/Register";
+import MusicPlayer from "../screens/MusicPlayer";
+import Login from "../screens/Login";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -77,7 +80,7 @@ function ArticlesStack(props) {
         component={Articles}
         options={{
           header: ({ navigation, scene }) => (
-            <Header title="Articles" navigation={navigation} scene={scene} />
+            <Header title="Add new playlist" navigation={navigation} scene={scene} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" },
         }}
@@ -165,8 +168,6 @@ function HomeStack(props) {
           header: ({ navigation, scene }) => (
             <Header
               title="Home"
-              search
-              options
               navigation={navigation}
               scene={scene}
             />
@@ -210,6 +211,20 @@ export default function OnboardingStack(props) {
           headerTransparent: true,
         }}
       />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        options={{
+          headerShown: false,
+        }}
+        />
       <Stack.Screen name="App" component={AppStack} />
     </Stack.Navigator>
   );
@@ -260,11 +275,19 @@ function AppStack(props) {
           headerShown: false,
         }}
       />
-      <Drawer.Screen
-        name="Account"
-        component={Register}
+      <Stack.Screen
+        name="MusicPlayer"
+        component={MusicPlayer}
         options={{
-          headerShown: false,
+          headerShown: true,
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Music Player"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: "#F8F9FE" },
         }}
       />
       <Drawer.Screen
@@ -280,7 +303,7 @@ function AppStack(props) {
         options={{
           headerShown: false,
         }}
-      />
+      />      
     </Drawer.Navigator>
   );
 }
