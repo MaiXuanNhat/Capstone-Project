@@ -4,6 +4,7 @@ const user = require('./user.route')
 const song = require('./song.route')
 const playlist = require('./playlist.route')
 const history = require('./history.route')
+const recommendSong = require('./recommend.route')
 
 module.exports = {
     auth: auth,
@@ -12,4 +13,5 @@ module.exports = {
     song: song,
     playlist: playlist,
     history: history,
+    recommendSong: recommendSong,
 }

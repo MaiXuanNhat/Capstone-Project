@@ -22,5 +22,6 @@ app.use('/api/users', routes.user)
 app.use('/api/songs', routes.song)
 app.use('/api/playlists', routes.playlist)
 app.use('/api/histories', routes.history)
+app.use('/api/recommend-songs', routes.recommendSong)
 
 module.exports = app
