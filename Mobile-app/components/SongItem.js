@@ -9,6 +9,12 @@ const SongItem = ({ song, navigation }) => {
             navigation.navigate('MusicPlayer', { songId: song.id })
         }
     }
+    const formatArtists = (artists) => {
+        if (artists[0] === `"`) artists = artists.slice(1, -1)
+        const artistsArray = artists.slice(1, -1).split(',')
+        const artistsList = artistsArray.map(artist => artist.trim().slice(1, -1))
+        return artistsList.join(', ')
+    }
     return (
         <Pressable
             onPress={handlePress}
@@ -26,7 +32,7 @@ const SongItem = ({ song, navigation }) => {
                     {song?.title}
                 </Text>
                 <Text style={{ marginTop: 4, color: "black" }}>
-                    {song?.artists}
+                    {song && formatArtists(song.artists)}
                 </Text>
             </View>
             <View
@@ -38,10 +44,10 @@ const SongItem = ({ song, navigation }) => {
                 }}
             >
                 <Icon
-                  size={20}
-                  name="clear"
-                  family="MaterialIcons"
-                />                
+                    size={20}
+                    name="clear"
+                    family="MaterialIcons"
+                />
             </View>
         </Pressable>
     );

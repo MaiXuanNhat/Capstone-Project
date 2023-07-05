@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
         await AsyncStorage.setItem('token', response.data.token)
         setToken(response.data.token)
         console.log(response.data.message)
-        navigation.navigate('Home')
+        navigation.navigate('App')
       }
     } catch (error) {
       //TODO: hiển bị thông báo theo từng error code (error.request.status === 404)
