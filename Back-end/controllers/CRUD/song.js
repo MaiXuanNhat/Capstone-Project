@@ -64,8 +64,40 @@ async function showBySpotifyId(spotifyId, userId) {
     })
 }
 
+async function showByIds(ids, userId) {
+    const selection = objectCleaner.clean({
+        [Op.or]: objectCleaner.clean({
+            '$History.user_id': userId,
+            '$LikedSong.user_id': userId,
+        }),
+        id: ids,
+    })
+
+    return models.Song.findAll({
+        include: include,
+        where: selection,
+    })
+}
+
+async function showByTitles(titles, userId) {
+    const selection = objectCleaner.clean({
+        [Op.or]: objectCleaner.clean({
+            '$History.user_id': userId,
+            '$LikedSong.user_id': userId,
+        }),
+        title: titles
+    })
+
+    return models.Song.findOne({
+        include: include,
+        where: selection,
+    })
+}
+
 module.exports = {
     getListSongs: index,
     getSongById: showById,
     getSongBySpotifyId: showBySpotifyId,
+    getListSongsByIds: showByIds,
+    getListSongsByTitles: showByTitles
 }

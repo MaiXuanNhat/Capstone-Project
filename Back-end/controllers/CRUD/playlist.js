@@ -59,7 +59,7 @@ async function checkOwner(playlistId, userId) {
 }
 
 module.exports = {
-    getListPLaylistsByUserId: indexByUserId,
+    getListPlaylistsByUserId: indexByUserId,
     getPlaylistById: showById,
     addNewPlaylist: create,
     updatePlaylistById: update,

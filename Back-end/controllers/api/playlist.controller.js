@@ -2,7 +2,7 @@ const validators = require(process.cwd() + '/helpers/validators')
 const { getCurrentDateTime } = require(process.cwd() + '/helpers/datetime')
 
 const {
-    getListPLaylistsByUserId,
+    getListPlaylistsByUserId,
     getPlaylistById,
     addNewPlaylist,
     updatePlaylistById,
@@ -10,7 +10,7 @@ const {
     checkTitleExisted
 } = require('../CRUD/playlist')
 
-async function index(request, response) {
+async function indexByUserId(request, response) {
     try {
         const requestUserId = request.userData.userId
         const params = {
@@ -25,7 +25,7 @@ async function index(request, response) {
                 : getCurrentDateTime().split(' ')[0] + ' 23:59:59',
         }
 
-        const queryResult = await getListPLaylistsByUserId(requestUserId, params)
+        const queryResult = await getListPlaylistsByUserId(requestUserId, params)
 
         return response.status(200).json(queryResult)
     } catch (error) {
@@ -185,7 +185,7 @@ async function deleteById(request, response) {
 }
 
 module.exports = {
-    index: index,
+    indexByUserId: indexByUserId,
     showById: showById,
     create: create,
     updateById: updateById,
