@@ -3,6 +3,7 @@ const upload = require('./upload.route')
 const user = require('./user.route')
 const song = require('./song.route')
 const playlist = require('./playlist.route')
+const history = require('./history.route')
 
 module.exports = {
     auth: auth,
@@ -10,4 +11,5 @@ module.exports = {
     user: user,
     song: song,
     playlist: playlist,
+    history: history,
 }
