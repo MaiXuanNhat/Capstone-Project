@@ -22,8 +22,15 @@ const playlistSchema = {
     description: { type: 'string', optional: true },
 }
 
+const historySchema = {
+    user_id: { type: 'number', optional: true },
+    song_id: { type: 'number', optional: true },
+    duration: { type: 'number', optional: true },
+}
+
 module.exports = {
     userSchema: userSchema,
     userInfoSchema: userInfoSchema,
     playlistSchema: playlistSchema,
+    historySchema: historySchema,
 }

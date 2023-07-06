@@ -10,4 +10,6 @@ router.get(
     historyApiController.indexByUserId,
 )
 
+router.post('/', checkAuthMiddleware.checkAuth, historyApiController.create)
+
 module.exports = router

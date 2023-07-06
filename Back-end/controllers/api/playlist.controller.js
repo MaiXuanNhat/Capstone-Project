@@ -121,7 +121,7 @@ async function updateById(request, response) {
                 description: request.body.description
             }
 
-            // Validate update vehicle's data
+            // Validate update playlist's data
             const validateResponse = validators.validatePlaylist(updatePlaylist)
             if (validateResponse !== true) {
                 return response.status(400).json({
@@ -130,7 +130,7 @@ async function updateById(request, response) {
                 })
             }
 
-            // Update vehicle's data
+            // Update playlist's data
             await updatePlaylistById(updatePlaylist, dbPlaylist.id)
 
             // Update song associations

@@ -8,7 +8,7 @@ const include = [
 ]
 
 async function indexByUserId(userId, startIndex, limit) {
-    return models.Song.findAndCountAll({
+    return models.History.findAll({
         offset: startIndex,
         limit: limit,
         order: [
@@ -19,6 +19,27 @@ async function indexByUserId(userId, startIndex, limit) {
     })
 }
 
+async function showByUserIdAndSongId(userId, songId) {
+    return models.History.findOne({
+        include: include,
+        where: {
+            user_id: userId,
+            song_id: songId,
+        },
+    })
+}
+
+async function create(newHistory) {
+    return models.History.create(newHistory)
+}
+
+async function update(updateHistory, historyId) {
+    return models.History.update(updateHistory, { where: { id: historyId } })
+}
+
 module.exports = {
     getListHistoriesByUserId: indexByUserId,
+    getHistoryByUserIdAndSongId: showByUserIdAndSongId,
+    addNewHistory: create,
+    updateHistoryById: update,
 }
