@@ -7,6 +7,7 @@ import Input from './Input';
 import Switch from './Switch';
 import Select from './Select';
 import SongItem from './SongItem';
+import PlaylistItem from './PlaylistItem'
 
 export {
   Button,
@@ -17,5 +18,6 @@ export {
   Header,
   Switch, 
   Select,
-  SongItem
+  SongItem,
+  PlaylistItem
 };

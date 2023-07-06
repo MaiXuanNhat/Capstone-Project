@@ -15,7 +15,7 @@ function CustomDrawerContent({
   state,
   ...rest
 }) {
-  const screens = ["Home", "Profile", "Account", "Elements", "Articles", "MusicPlayer"];
+  const screens = ["Home", "Profile", "Account", "Elements", "Playlists", "MusicPlayer"];
   const { handleLogout } = useAuth()
   return (
     <Block

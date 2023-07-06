@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View, Pressable, Image } from "react-native";
 import React, { useContext } from "react";
-import { Images } from "../constants";
+import { Images, Select } from "../constants";
+import Checkbox from 'expo-checkbox';
 import { Icon } from ".";
 
-const SongItem = ({ song, navigation }) => {
+const SongItem = ({ song, navigation, selectMode }) => {
     const handlePress = () => {
         if (song) {
             navigation.navigate('MusicPlayer', { songId: song.id })
@@ -15,9 +16,24 @@ const SongItem = ({ song, navigation }) => {
         const artistsList = artistsArray.map(artist => artist.trim().slice(1, -1))
         return artistsList.join(', ')
     }
+
+    const handleSelectSong = () => {
+        if (selectMode.credentials.includes(song.id)) {
+            selectMode.handleChangeCredentials({
+                song_ids: selectMode.credentials.filter(
+                    (id) => id !== song.id,
+                ),
+            })
+        } else {
+            selectMode.handleChangeCredentials({
+                song_ids: [...selectMode.credentials, song.id],
+            })
+        }
+    }
+
     return (
         <Pressable
-            onPress={handlePress}
+            onPress={selectMode ? handleSelectSong : handlePress}
             style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
         >
             <Image
@@ -35,20 +51,21 @@ const SongItem = ({ song, navigation }) => {
                     {song && formatArtists(song.artists)}
                 </Text>
             </View>
-            <View
-                style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 7,
-                    marginHorizontal: 10,
-                }}
-            >
-                <Icon
-                    size={20}
-                    name="clear"
-                    family="MaterialIcons"
-                />
-            </View>
+            {selectMode &&
+                <View
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 7,
+                        marginHorizontal: 10,
+                    }}
+                >
+                    <Checkbox
+                        value={selectMode.credentials.includes(song.id)}
+                        onValueChange={handleSelectSong}
+                    />
+                </View>
+            }
         </Pressable>
     );
 };

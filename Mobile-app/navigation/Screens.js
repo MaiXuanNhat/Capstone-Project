@@ -1,15 +1,19 @@
 import { Animated, Dimensions, Easing } from "react-native";
+import { Block } from "galio-framework";
+
 // header for screens
-import { Header, Icon } from "../components";
+import { Header, Icon, Button } from "../components";
 import { argonTheme, tabs } from "../constants";
 
-import Articles from "../screens/Articles";
-import { Block } from "galio-framework";
+
 // drawer
 import CustomDrawerContent from "./Menu";
 import Elements from "../screens/Elements";
+
 // screens
 import Home from "../screens/Home";
+import Playlists from "../screens/Playlists";
+import AddPlaylist from "../screens/AddPlaylist";
 import Onboarding from "../screens/Onboarding";
 import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
@@ -67,7 +71,7 @@ function ElementsStack(props) {
   );
 }
 
-function ArticlesStack(props) {
+function PlaylistsStack(props) {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -76,8 +80,22 @@ function ArticlesStack(props) {
       }}
     >
       <Stack.Screen
-        name="Articles"
-        component={Articles}
+        name="Playlists"
+        component={Playlists}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Your playlists"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: "#F8F9FE" },
+        }}
+      />
+      <Stack.Screen
+        name="AddPlaylist"
+        component={AddPlaylist}
         options={{
           header: ({ navigation, scene }) => (
             <Header title="Add new playlist" navigation={navigation} scene={scene} />
@@ -298,8 +316,8 @@ function AppStack(props) {
         }}
       />
       <Drawer.Screen
-        name="Articles"
-        component={ArticlesStack}
+        name="Playlists"
+        component={PlaylistsStack}
         options={{
           headerShown: false,
         }}
