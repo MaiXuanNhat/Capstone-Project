@@ -4,7 +4,7 @@ const recommendApiController = require('../controllers/api/recommend.controller'
 
 const router = express.Router()
 
-router.get(
+router.post(
     '/',
     checkAuthMiddleware.checkAuth,
     recommendApiController.getSongRecommendations,

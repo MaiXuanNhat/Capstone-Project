@@ -43,7 +43,7 @@ async function showById(id, userId) {
 
     return models.Song.findByPk(id, {
         include: include,
-        where: selection,
+        // where: selection,
     })
 }
 
@@ -70,27 +70,29 @@ async function showByIds(ids, userId) {
             '$History.user_id': userId,
             '$LikedSong.user_id': userId,
         }),
-        id: ids,
     })
 
     return models.Song.findAll({
         include: include,
-        where: selection,
+        where: { id: ids },
+        // where: selection,
     })
 }
 
-async function showByTitles(titles, userId) {
+async function showByTitles(titles, artists, userId) {
     const selection = objectCleaner.clean({
         [Op.or]: objectCleaner.clean({
             '$History.user_id': userId,
             '$LikedSong.user_id': userId,
         }),
-        title: titles
+        title: titles,
+        artists: artists
     })
 
-    return models.Song.findOne({
+    return models.Song.findAll({
         include: include,
-        where: selection,
+        where: { title: titles, artists: artists },
+        // where: selection,
     })
 }
 
