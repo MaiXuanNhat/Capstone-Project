@@ -1,7 +1,7 @@
 {
-  "name": "argon-react-native",
-  "version": "1.8.0",
-  "description": "Argon React Native, based on Argon Design System. Coded by Creative Tim",
+  "name": "rhyth-mix",
+  "version": "1.0.0",
+  "description": "Music App",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/creativetimofficial/argon-react-native.git"
+    "url": "git+https://github.com/MaiXuanNhat/Capstone-Project.git"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "react-native-async-storage/async-storage",
@@ -27,6 +27,7 @@
     "expo": "*",
     "expo-app-loading": "*",
     "expo-asset": "*",
+    "expo-av": "^13.4.1",
     "expo-checkbox": "~2.4.0",
     "expo-font": "*",
     "expo-modules-core": "*",
@@ -63,10 +64,5 @@
     "argon expo react native",
     "react native ui template"
   ],
-  "author": "Creative Tim <hello@creative-tim.com> (https://www.creative-tim.com/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/creativetimofficial/argon-react-native/issues"
-  },
-  "homepage": "https://demos.creative-tim.com/argon-react-native"
+  "author": "MaiXuanNhat"
 }

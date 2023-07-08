@@ -24,7 +24,7 @@ const assetImages = [
   Images.LogoOnboarding,
   Images.Logo,
   Images.Pro,
-  Images.ArgonLogo,
+  Images.musiclogo,
   Images.iOSLogo,
   Images.androidLogo
 ];

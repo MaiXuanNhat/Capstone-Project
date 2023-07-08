@@ -83,7 +83,7 @@ function Login(props) {
                 </Text>
               </Block>
               <Image
-                source={Images.ArgonLogo}
+                source={Images.musiclogo}
                 style={styles.picture}
               />
               <Block flex center>

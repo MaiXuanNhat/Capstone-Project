@@ -15,6 +15,7 @@ import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import { withNavigation } from '@react-navigation/compat'
 import songApi from '../api/songApi';
+import { Audio } from 'expo-av';
 
 const { width, height } = Dimensions.get("screen");
 
@@ -28,6 +29,7 @@ export default function MusicPlayer(props) {
 
     const { songId } = route.params
     const [song, setSong] = useState(null)
+    const [audio, setAudio] = useState()
     const [isPlaying, setIsPlaying] = useState(true)
     const [duration, setDuration] = useState(0)
     const [volume, setVolume] = useState(0)
@@ -52,7 +54,7 @@ export default function MusicPlayer(props) {
         const minutes = Math.floor(duration / 60000);
         const seconds = Math.floor((duration % 60000) / 1000);
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-      };
+    };
     const handleSliderChange = (value) => {
         setDuration(value);
     };
@@ -63,8 +65,50 @@ export default function MusicPlayer(props) {
         if (songId) getSong()
     }, [songId])
 
-    return (
+    // const [sound, setSound] = useState();
+    useEffect(() => {
+        async function requestPermission() {
+            const audioPermission = Audio.getPermissionsAsync()
+            if (!audioPermission.granted) {
+                return await Audio.requestPermissionsAsync()
+            }
+        }
+        requestPermission()
+    }, [])
 
+    useEffect(() => {
+        async function loadAudio() {
+            try {
+                if (!audio) {
+                    const audio = new Audio.Sound();
+                    await audio.loadAsync(require('../assets/audio/Really.mp3'), { shouldPlay: true });
+                    await audio.setPositionAsync(0);
+                    setAudio(audio);
+                }
+                audio.setOnPlaybackStatusUpdate((status) => {
+                    setDuration(status.positionMillis)
+                })
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        loadAudio()
+    }, [])
+
+    const handlePressPlayButton = async () => {
+        if (audio) {
+            const audioStatus = await audio.getStatusAsync();
+            if (audioStatus.isPlaying) {
+                setIsPlaying(false);
+                await audio.pauseAsync();
+            } else {
+                setIsPlaying(true);
+                await audio.playAsync();
+            }
+        }
+    }  
+
+    return (
         <Block flex style={styles.profile}>
             <Block flex>
                 <ImageBackground
@@ -106,7 +150,7 @@ export default function MusicPlayer(props) {
                             </Block>
                             <Block flex row space="between">
                                 <Text>{formatTime(duration)}</Text>
-                                <Text>{"-" + formatTime(song?.duration-duration)}</Text>
+                                <Text>{"-" + formatTime(song?.duration - duration)}</Text>
                             </Block>
                             <Block row center space="between" style={{ marginTop: 20 }}>
                                 <Block flex middle right>
@@ -119,7 +163,7 @@ export default function MusicPlayer(props) {
                                 </Block>
                                 <Block flex middle center>
                                     <Button
-                                        onPress={() => setIsPlaying((prev) => !prev)}
+                                        onPress={handlePressPlayButton}
                                         onlyIcon icon={isPlaying ? "pause" : "play"}
                                         iconFamily="Font-Awesome"
                                         iconSize={20} color="default"
