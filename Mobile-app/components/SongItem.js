@@ -11,7 +11,6 @@ const SongItem = ({ song, navigation, selectMode }) => {
         }
     }
     const formatArtists = (artists) => {
-        if (artists[0] === `"`) artists = artists.slice(1, -1)
         const artistsArray = artists.slice(1, -1).split(',')
         const artistsList = artistsArray.map(artist => artist.trim().slice(1, -1))
         return artistsList.join(', ')

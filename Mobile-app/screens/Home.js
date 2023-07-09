@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react'
 import {
   StyleSheet,
   Dimensions,
-  ImageBackground,
   ScrollView,
   StatusBar,
   RefreshControl,
-  TouchableOpacity,
 } from 'react-native'
 import { Block, theme } from 'galio-framework';
 
