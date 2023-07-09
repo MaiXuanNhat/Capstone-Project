@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             spotify_id: DataTypes.STRING,
             title: DataTypes.STRING,
+            audio_url: DataTypes.STRING,
             artists: DataTypes.TEXT,
             duration: DataTypes.INTEGER,
             release_date: {

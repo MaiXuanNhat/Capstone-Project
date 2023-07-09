@@ -33,6 +33,7 @@ module.exports = {
                 allSongs.push({
                     spotify_id: song.id,
                     title: song.name,
+                    audio_url: `public/audios/${song.name}.mp3`,
                     artists: song.artists,
                     duration: parseInt(song.duration_ms),
                     release_date: new Date(song.release_date),
