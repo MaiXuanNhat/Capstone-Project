@@ -15,6 +15,7 @@ import { Button, Icon } from "../components";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
 import songApi from '../api/songApi';
+import historyApi from "../api/historyApi";
 import { Audio } from 'expo-av';
 import { BASE_API_URL } from "../api/axiosClient";
 
@@ -45,8 +46,9 @@ export default function MusicPlayer(props) {
             setDuration(0);
             setVolume(0);
         }
-        if (!isFocused){
+        if (!isFocused) {
             unloadAudio();
+            createHistory()
         }
     }, [isFocused])
 
@@ -126,7 +128,26 @@ export default function MusicPlayer(props) {
                 await audio.playAsync();
             }
         }
-    }  
+    }
+
+    const createHistory = async () => {
+        try {
+            const response = await historyApi.addHistory(
+                {
+                    songId: songId,
+                    duration: duration,
+                }
+            )
+            if (response.status === 200) {
+                const historyId = response.data.historyId;
+                console.log('History created successfully. History ID:', historyId);
+            } else {
+                console.log('Failed to create history.');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <Block flex style={styles.profile}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import {
   StyleSheet,
   Dimensions,
@@ -6,6 +6,7 @@ import {
   StatusBar,
   RefreshControl,
 } from 'react-native'
+import { useIsFocused } from '@react-navigation/native'
 import { Block, theme } from 'galio-framework';
 
 import { Icon, Input, SongItem, Button } from '../components';
@@ -15,18 +16,27 @@ const { width, height } = Dimensions.get('screen')
 import { HeaderHeight } from '../constants/utils';
 import useAuth from '../hooks/useAuth';
 import songApi from '../api/songApi';
+import historyApi from '../api/historyApi';
+import recommendApi from '../api/recommendApi';
 
 export default function Home(props) {
   const { navigation } = props
   const { authUser, isLoading, setIsLoading } = useAuth()
+  const isFocused = useIsFocused()
   const [refresh, forceRefresh] = useState()
   const [songs, setSongs] = useState(null)
   const defaultParams = {
-    limit: 10,
+    limit: 20,
     page: 1,
     txt_search: null,
   }
   const [params, setParams] = useState(defaultParams)
+  const [tab, setTab] = useState(0);
+  useEffect(() => {
+    if (isFocused) {
+      forceRefresh((prev) => !prev)
+    }
+  }, [isFocused])
   useEffect(() => {
     async function fetchSongsData() {
       setIsLoading(true)
@@ -39,8 +49,50 @@ export default function Home(props) {
         alert(error.response.data.message)
       }
     }
-    fetchSongsData()
-  }, [refresh, params])
+    async function fetchHistoriesData() {
+      setIsLoading(true)
+      try {
+        const response = await historyApi.getListByParams(params)
+        setSongs(response.data.map(history => history.Song))
+        setIsLoading(false)
+      } catch (error) {
+        setIsLoading(false)
+        alert(error.response.data.message)
+      }
+    }
+    async function fetchRecommendSongs() {
+      try {
+        const history = await historyApi.getListByParams(params)
+        const response = await recommendApi.getSongRecommendations({
+          query_song_ids: history.data.map(history => history.Song.id),
+          limit: 10,
+        })
+        setSongs(response.data)
+      } catch (error) {
+        setIsLoading(false)
+        alert(error.response.data.message)
+      }
+    }
+    switch (tab) {
+      case 0:
+        fetchSongsData()
+        break
+      case 1:
+        fetchHistoriesData()
+        break
+      case 2:
+        fetchRecommendSongs()
+        break
+      default:
+    }
+  }, [refresh, params, tab])
+  const handleTabs = useCallback(
+    (tab) => {
+      setTab(tab)
+    },
+    [setTab, setSongs],
+  )
+
 
   return (
     <Block flex center style={styles.home}>
@@ -81,32 +133,49 @@ export default function Home(props) {
           style={{ width, height, zIndex: 1 }}
         >
           <Block safe flex style={{ marginBottom: HeaderHeight * 2.25 }}>
-            <Block row space="evenly">
-              <Button small center color="primary" style={{
-                width: 'auto',
-                height: 34,
-                paddingHorizontal: theme.SIZES.BASE,
-                paddingVertical: 10,
-              }}>
-                All
-              </Button>
-              <Button small center color="secondary"
-                textStyle={{ color: 'black', fontSize: 12, fontWeight: '700' }} style={{
-                  width: 'auto',
-                  height: 34,
-                  paddingHorizontal: theme.SIZES.BASE,
-                  paddingVertical: 10,
-                }}>
-                History
-              </Button>
-              <Button small center color="secondary"
-                textStyle={{ color: 'black', fontSize: 12, fontWeight: '700' }}
+            <Block row space="evenly" style={{ marginBottom: 20 }}>
+              <Button
+                small
+                center
+                color={tab === 0 ? 'success' : 'secondary'}
+                textStyle={{ color: tab === 0 ? 'white' : 'black', fontSize: 16, fontWeight: '700' }}
                 style={{
                   width: 'auto',
-                  height: 34,
+                  height: 40,
                   paddingHorizontal: theme.SIZES.BASE,
                   paddingVertical: 10,
-                }}>
+                }}
+                onPress={() => handleTabs(0)}
+              >
+                All
+              </Button>
+              <Button
+                small
+                center
+                color={tab === 1 ? 'success' : 'secondary'}
+                textStyle={{ color: tab === 1 ? 'white' : 'black', fontSize: 16, fontWeight: '700' }}
+                style={{
+                  width: 'auto',
+                  height: 40,
+                  paddingHorizontal: theme.SIZES.BASE,
+                  paddingVertical: 10,
+                }} onPress={() => handleTabs(1)}
+              >
+                History
+              </Button>
+              <Button
+                small
+                center
+                color={tab === 2 ? 'success' : 'secondary'}
+                textStyle={{ color: tab === 2 ? 'white' : 'black', fontSize: 16, fontWeight: '700' }}
+                style={{
+                  width: 'auto',
+                  height: 40,
+                  paddingHorizontal: theme.SIZES.BASE,
+                  paddingVertical: 10,
+                }}
+                onPress={() => handleTabs(2)}
+              >
                 Recommend
               </Button>
             </Block>
