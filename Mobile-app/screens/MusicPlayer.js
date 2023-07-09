@@ -51,7 +51,6 @@ export default function MusicPlayer(props) {
             setAudio(null);
             setIsPlaying(true);
             setDuration(0);
-            setVolume(0);
 
             // Update history
             await historyApi.addHistory(

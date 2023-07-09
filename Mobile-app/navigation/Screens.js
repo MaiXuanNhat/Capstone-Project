@@ -268,7 +268,7 @@ function AppStack(props) {
         backgroundColor: "white",
         width: width * 0.8,
       }}
-      drawerContentOptions={{
+      screenOptions={{
         activeTintcolor: "white",
         inactiveTintColor: "#000",
         activeBackgroundColor: "transparent",
