@@ -6,16 +6,17 @@ import {
     Image,
     ImageBackground,
     Platform,
-    TouchableOpacity
 } from "react-native";
-import { Block, Text, theme, Slider } from "galio-framework";
+import { useIsFocused } from '@react-navigation/native';
+import { Block, Text, theme } from "galio-framework";
+import { Slider } from "@miblanchard/react-native-slider";
 
 import { Button, Icon } from "../components";
 import { Images, argonTheme } from "../constants";
 import { HeaderHeight } from "../constants/utils";
-import { withNavigation } from '@react-navigation/compat'
 import songApi from '../api/songApi';
 import { Audio } from 'expo-av';
+import { BASE_API_URL } from "../api/axiosClient";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -27,25 +28,29 @@ export default function MusicPlayer(props) {
         navigation,
     } = props
 
+    const isFocused = useIsFocused();
     const { songId } = route.params
     const [song, setSong] = useState(null)
     const [audio, setAudio] = useState()
     const [isPlaying, setIsPlaying] = useState(true)
     const [duration, setDuration] = useState(0)
-    const [volume, setVolume] = useState(0)
+    const [volume, setVolume] = useState(1)
     const [isLiked, setIsLiked] = useState(true)
 
-    const getSong = async () => {
-        try {
-            const response = await songApi.getOneById(songId)
-            setSong(response.data)
-            console.log(song);
-        } catch (error) {
-            console.log(error)
+    useEffect(() => {
+        const unloadAudio = async () => {
+            await audio.unloadAsync();
+            setAudio(null);
+            setIsPlaying(true);
+            setDuration(0);
+            setVolume(0);
         }
-    }
+        if (!isFocused){
+            unloadAudio();
+        }
+    }, [isFocused])
+
     const formatArtists = (artists) => {
-        if (artists[0] === `"`) artists = artists.slice(1, -1)
         const artistsArray = artists.slice(1, -1).split(',')
         const artistsList = artistsArray.map(artist => artist.trim().slice(1, -1))
         return artistsList.join(', ')
@@ -55,17 +60,31 @@ export default function MusicPlayer(props) {
         const seconds = Math.floor((duration % 60000) / 1000);
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
-    const handleSliderChange = (value) => {
-        setDuration(value);
+    const handleSliderChange = async (value) => {
+        if (audio) {
+            audio.setPositionAsync(Number.parseInt(value[0]))
+        }
     };
-    const handleVolumeChange = (value) => {
-        setVolume(value);
+    const handleVolumeChange = async (value) => {
+        if (audio) {
+            await audio.setVolumeAsync(value[0]);
+        }
+
     }
     useEffect(() => {
-        if (songId) getSong()
-    }, [songId])
+        const fetchSongDetail = async () => {
+            console.log("song id: ", songId);
+            try {
+                const response = await songApi.getOneById(songId)
+                setSong(response.data)
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
-    // const [sound, setSound] = useState();
+        if (isFocused && songId) fetchSongDetail()
+    }, [songId, isFocused])
+
     useEffect(() => {
         async function requestPermission() {
             const audioPermission = Audio.getPermissionsAsync()
@@ -79,21 +98,22 @@ export default function MusicPlayer(props) {
     useEffect(() => {
         async function loadAudio() {
             try {
-                if (!audio) {
+                if (song && !audio) {
                     const audio = new Audio.Sound();
-                    await audio.loadAsync(require('../assets/audio/Really.mp3'), { shouldPlay: true });
+                    await audio.loadAsync({ uri: BASE_API_URL + song.audio_url }, { shouldPlay: true });
                     await audio.setPositionAsync(0);
+                    audio.setOnPlaybackStatusUpdate((status) => {
+                        setDuration(status.positionMillis)
+                        setVolume(status.volume)
+                    })
                     setAudio(audio);
                 }
-                audio.setOnPlaybackStatusUpdate((status) => {
-                    setDuration(status.positionMillis)
-                })
             } catch (error) {
                 console.log(error);
             }
         }
         loadAudio()
-    }, [])
+    }, [song])
 
     const handlePressPlayButton = async () => {
         if (audio) {
@@ -137,7 +157,7 @@ export default function MusicPlayer(props) {
                                     </Text>
                                 </Block>
                             </Block>
-                            <Block >
+                            <Block>
                                 <Slider
                                     style={{ width: "100%", height: 40, marginTop: 30 }}
                                     minimumValue={0}

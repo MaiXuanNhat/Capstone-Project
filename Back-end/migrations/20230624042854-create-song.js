@@ -16,6 +16,9 @@ module.exports = {
             title: {
                 type: Sequelize.STRING,
             },
+            audio_url: {
+                type: Sequelize.STRING,
+            },
             artists: {
                 type: Sequelize.TEXT,
             },
