@@ -14,6 +14,7 @@ import Elements from "../screens/Elements";
 import Home from "../screens/Home";
 import Playlists from "../screens/Playlists";
 import AddPlaylist from "../screens/AddPlaylist";
+import PlaylistDetail from "../screens/PlaylistDetail";
 import Onboarding from "../screens/Onboarding";
 import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
@@ -99,6 +100,16 @@ function PlaylistsStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header title="Add new playlist" navigation={navigation} scene={scene} />
+          ),
+          cardStyle: { backgroundColor: "#F8F9FE" },
+        }}
+      />
+      <Stack.Screen
+        name="PlaylistDetail"
+        component={PlaylistDetail}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header title="Playlist Detail" navigation={navigation} scene={scene} />
           ),
           cardStyle: { backgroundColor: "#F8F9FE" },
         }}
