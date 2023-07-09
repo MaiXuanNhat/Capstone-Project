@@ -7,7 +7,7 @@ import { Icon } from ".";
 const SongItem = ({ song, navigation, selectMode }) => {
     const handlePress = () => {
         if (song) {
-            navigation.navigate('MusicPlayer', { songId: song.id })
+            navigation.navigate('MusicPlayer', { songIds: [song.id] })
         }
     }
     const formatArtists = (artists) => {
@@ -32,7 +32,7 @@ const SongItem = ({ song, navigation, selectMode }) => {
 
     return (
         <Pressable
-            onPress={selectMode ? handleSelectSong : handlePress}
+            onPress={() => selectMode ? handleSelectSong() : handlePress()}
             style={{ flexDirection: "row", alignItems: "center", padding: 10 }}
         >
             <Image

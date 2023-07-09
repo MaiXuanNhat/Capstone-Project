@@ -9,8 +9,8 @@ router.get(
     checkAuthMiddleware.checkAuth,
     songApiController.index,
 )
-router.get(
-    '/:id',
+router.post(
+    '/',
     checkAuthMiddleware.checkAuth,
     songApiController.showById,
 )

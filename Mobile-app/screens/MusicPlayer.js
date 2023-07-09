@@ -30,27 +30,38 @@ export default function MusicPlayer(props) {
     } = props
 
     const isFocused = useIsFocused();
-    const { songId } = route.params
-    const [song, setSong] = useState(null)
+    const { songIds } = route.params
+    const [songs, setSongs] = useState(null)
     const [audio, setAudio] = useState()
+    const [currentSong, setCurrentSong] = useState()
     const [isPlaying, setIsPlaying] = useState(true)
     const [duration, setDuration] = useState(0)
     const [volume, setVolume] = useState(1)
     const [isLiked, setIsLiked] = useState(true)
 
     useEffect(() => {
-        const unloadAudio = async () => {
+        if (!isFocused && audio) {
+            handleUnloadAudio()
+        }
+    }, [isFocused])
+
+    const handleUnloadAudio = async () => {
+        if (audio) {
             await audio.unloadAsync();
             setAudio(null);
             setIsPlaying(true);
             setDuration(0);
             setVolume(0);
+
+            // Update history
+            await historyApi.addHistory(
+                {
+                    songId: currentSong.id,
+                    duration: duration,
+                }
+            )
         }
-        if (!isFocused) {
-            unloadAudio();
-            createHistory()
-        }
-    }, [isFocused])
+    }
 
     const formatArtists = (artists) => {
         const artistsArray = artists.slice(1, -1).split(',')
@@ -74,18 +85,23 @@ export default function MusicPlayer(props) {
 
     }
     useEffect(() => {
-        const fetchSongDetail = async () => {
-            console.log("song id: ", songId);
+        const fetchSongs = async () => {
             try {
-                const response = await songApi.getOneById(songId)
-                setSong(response.data)
+                const response = await songApi.getListById({
+                    song_ids: songIds
+                })
+                
+                if (response.status === 200 && response.data.length > 0) {
+                    setSongs(response.data)
+                    setCurrentSong(response.data[0])
+                }
             } catch (error) {
                 console.log(error)
             }
         }
 
-        if (isFocused && songId) fetchSongDetail()
-    }, [songId, isFocused])
+        if (isFocused && songIds) fetchSongs()
+    }, [songIds, isFocused])
 
     useEffect(() => {
         async function requestPermission() {
@@ -100,22 +116,20 @@ export default function MusicPlayer(props) {
     useEffect(() => {
         async function loadAudio() {
             try {
-                if (song && !audio) {
-                    const audio = new Audio.Sound();
-                    await audio.loadAsync({ uri: BASE_API_URL + song.audio_url }, { shouldPlay: true });
-                    await audio.setPositionAsync(0);
-                    audio.setOnPlaybackStatusUpdate((status) => {
-                        setDuration(status.positionMillis)
-                        setVolume(status.volume)
-                    })
-                    setAudio(audio);
-                }
+                const audio = new Audio.Sound();
+                await audio.loadAsync({ uri: BASE_API_URL + currentSong.audio_url }, { shouldPlay: true });
+                await audio.setPositionAsync(0);
+                audio.setOnPlaybackStatusUpdate((status) => {
+                    setDuration(status.positionMillis)
+                    setVolume(status.volume)
+                })
+                setAudio(audio);
             } catch (error) {
                 console.log(error);
             }
         }
-        loadAudio()
-    }, [song])
+        if (currentSong) loadAudio()
+    }, [currentSong])
 
     const handlePressPlayButton = async () => {
         if (audio) {
@@ -130,22 +144,13 @@ export default function MusicPlayer(props) {
         }
     }
 
-    const createHistory = async () => {
-        try {
-            const response = await historyApi.addHistory(
-                {
-                    songId: songId,
-                    duration: duration,
-                }
-            )
-            if (response.status === 200) {
-                const historyId = response.data.historyId;
-                console.log('History created successfully. History ID:', historyId);
-            } else {
-                console.log('Failed to create history.');
-            }
-        } catch (error) {
-            console.log(error);
+    const handleChangeSong = async (step) => {
+        await handleUnloadAudio()
+        
+        const currentSongIndex = songs.indexOf(currentSong)
+
+        if (currentSongIndex + step >= 0 && currentSongIndex + step < songs.length) {
+            setCurrentSong(songs[currentSongIndex + step])
         }
     }
 
@@ -171,10 +176,10 @@ export default function MusicPlayer(props) {
                             <Block flex>
                                 <Block middle style={styles.nameInfo}>
                                     <Text bold size={28} color="#32325D">
-                                        {song?.title}
+                                        {currentSong?.title}
                                     </Text>
                                     <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                                        {song && formatArtists(song.artists)}
+                                        {currentSong && formatArtists(currentSong.artists)}
                                     </Text>
                                 </Block>
                             </Block>
@@ -182,7 +187,7 @@ export default function MusicPlayer(props) {
                                 <Slider
                                     style={{ width: "100%", height: 40, marginTop: 30 }}
                                     minimumValue={0}
-                                    maximumValue={song?.duration}
+                                    maximumValue={currentSong?.duration}
                                     value={duration}
                                     minimumTrackTintColor="#000000"
                                     maximumTrackTintColor="#cccccc"
@@ -191,7 +196,7 @@ export default function MusicPlayer(props) {
                             </Block>
                             <Block flex row space="between">
                                 <Text>{formatTime(duration)}</Text>
-                                <Text>{"-" + formatTime(song?.duration - duration)}</Text>
+                                <Text>{"-" + formatTime(currentSong?.duration - duration)}</Text>
                             </Block>
                             <Block row center space="between" style={{ marginTop: 20 }}>
                                 <Block flex middle right>
@@ -199,8 +204,9 @@ export default function MusicPlayer(props) {
                                         onlyIcon icon="step-backward"
                                         iconFamily="Font-Awesome"
                                         iconSize={20} color="default"
-                                        iconColor="white" style={{ width: 45, height: 45 }}>
-                                    </Button>
+                                        iconColor="white" style={{ width: 45, height: 45 }}
+                                        onPress={() => handleChangeSong(-1)}
+                                    />
                                 </Block>
                                 <Block flex middle center>
                                     <Button
@@ -216,8 +222,9 @@ export default function MusicPlayer(props) {
                                         onlyIcon icon="step-forward"
                                         iconFamily="Font-Awesome"
                                         iconSize={20} color="default"
-                                        iconColor="white" style={{ width: 45, height: 45 }}>
-                                    </Button>
+                                        iconColor="white" style={{ width: 45, height: 45 }}
+                                        onPress={() => handleChangeSong(1)}
+                                    />
                                 </Block>
                             </Block>
                             <Block flex style={{ marginTop: 20 }}>

@@ -3,7 +3,8 @@ const { getCurrentDateTime } = require(process.cwd() + '/helpers/datetime')
 const {
     getListSongs,
     getSongById,
-    getSongBySpotifyId
+    getSongBySpotifyId,
+    getListSongsByIds,
 } = require('../CRUD/song')
 
 async function index(request, response) {
@@ -54,12 +55,12 @@ async function index(request, response) {
 async function showById(request, response) {
     try {
         const requestUserId = request.userData.userId
-        const songId = request.params.id
+        const songIds = request.body.song_ids
 
-        const dbSong = await getSongById(songId, requestUserId)
+        const dbSongs = await getListSongsByIds(songIds, requestUserId)
 
-        if (dbSong) {
-            return response.status(200).json(dbSong)
+        if (dbSongs) {
+            return response.status(200).json(dbSongs)
         } else {
             return response.status(404).json({
                 message: 'Song not found!',

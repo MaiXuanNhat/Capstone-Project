@@ -31,8 +31,7 @@ export default function PlaylistDetail(props) {
             try {
                 const response = await playlistApi.getOneById(playlistId)
                 setPlaylist(response.data)
-                setSongs(playlist?.Songs)
-                console.log(playlist)
+                setSongs(response.data.Songs)
                 setIsLoading(false)
             } catch (error) {
                 setIsLoading(false)
@@ -40,7 +39,8 @@ export default function PlaylistDetail(props) {
             }
         }
         fetchPlaylistData()
-    }, [refresh])
+    }, [refresh, playlistId])
+
     return (
         <Block flex center style={styles.home}>
             <StatusBar hidden />
@@ -113,6 +113,7 @@ export default function PlaylistDetail(props) {
                         paddingHorizontal: theme.SIZES.BASE,
                         paddingVertical: 10,
                     }}
+                    onPress={() => navigation.navigate('MusicPlayer', { songIds: songs.map(song => song.id) })}
                 >
                     Play
                 </Button>

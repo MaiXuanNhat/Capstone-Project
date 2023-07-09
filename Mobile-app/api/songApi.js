@@ -8,9 +8,9 @@ const songApi = {
         }
         return axiosClient.get(url)
     },
-    getOneById: (id) => {
-        const url = `api/songs/${id}`
-        return axiosClient.get(url)
+    getListById: (data) => {
+        const url = `api/songs`
+        return axiosClient.post(url, data)
     },
     getOneBySpotifyId: (spotifyId) => {
         const url = `api/songs/get-by-spotify-id/${spotifyId}`
