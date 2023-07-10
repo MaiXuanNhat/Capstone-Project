@@ -116,7 +116,7 @@ export default function MusicPlayer(props) {
         async function loadAudio() {
             try {
                 const audio = new Audio.Sound();
-                await audio.loadAsync({ uri: BASE_API_URL + currentSong.audio_url }, { shouldPlay: true });
+                await audio.loadAsync({ uri: (BASE_API_URL + currentSong.audio_url).replaceAll(" ", "%20")}, { shouldPlay: true });
                 await audio.setPositionAsync(0);
                 audio.setOnPlaybackStatusUpdate((status) => {
                     setDuration(status.positionMillis)
