@@ -31,9 +31,9 @@ class DrawerItem extends React.Component {
       case "Playlists":
         return (
           <Icon
-            name="spaceship"
-            family="ArgonExtra"
-            size={14}
+            name="playlist-play"
+            family="MaterialIcons"
+            size={24}
             color={focused ? "white" : argonTheme.COLORS.PRIMARY}
           />
         );
@@ -65,9 +65,9 @@ class DrawerItem extends React.Component {
       case "MusicPlayer":
         return (
           <Icon
-            name="calendar-date"
-            family="ArgonExtra"
-            size={14}
+            name="music"
+            family="Entypo"
+            size={20}
             color={focused ? "white" : argonTheme.COLORS.SUCCESS}
           />
         );
